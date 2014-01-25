@@ -10,6 +10,9 @@ local accelleration = 1.0
 local maxVel = { x= 69.0, y = 61.0 }
 local friction = 1.00
 
+local maxAngVel = 10
+local 
+
 function physics.buildWoogyBody (world, w, h)
     local woogyPhysics = {}
     setmetatable(woogyPhysics, physics.mt)
@@ -32,6 +35,21 @@ function physics.prototype.update (self, keyspressed)
     if keyspressed['right'] then
         self:moveRight(  )
     end
+    if keyspressed['a'] then
+        local av = self.body:getAngularVelocity()
+        if av > -maxAngVel  then 
+            self.body:setAngularVelocity ( av - 0.1 )
+         end
+    end
+    if keyspressed['d'] then
+        local av = self.body:getAngularVelocity()
+        if av < maxAngVel  then 
+            local speed = 
+            self.body:setAngularVelocity ( av + 0.1 )
+        end
+        
+    end
+    
     
     --apply drag
     local vx, vy = self.body:getLinearVelocity()
