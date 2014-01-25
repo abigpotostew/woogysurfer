@@ -11,7 +11,7 @@ local maxVel = { x= 69.0, y = 61.0 }
 local friction = 1.00
 
 local maxAngVel = 10
-local 
+
 
 function physics.buildWoogyBody (world, w, h)
     local woogyPhysics = {}
