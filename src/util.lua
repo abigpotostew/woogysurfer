@@ -1,7 +1,7 @@
 local Util = setmetatable({}, nil)
 
 -- Disable undeclared globals
-setmetatable(_G, {
+--[[setmetatable(_G, {
 	__newindex = function(_ENV, var, val)
 		if var ~= 'tableDict' then
 			error(("attempt to set undeclared global \"%s\""):format(tostring(var)), 2)
@@ -14,7 +14,7 @@ setmetatable(_G, {
 			error(("attempt to read undeclared global \"%s\""):format(tostring(var)), 2)
 		end
 	end,
-})
+}) ]]--
 
 Util.EPSILON = 0.00001
 
@@ -185,7 +185,7 @@ end
 
 -- override print() function to improve performance when running on device
 -- and print out file and line number for each print
-local original_print = print
+--[[local original_print = print
 
 	print = function(message)
 		local info = debug.getinfo(2)
@@ -193,6 +193,6 @@ local original_print = print
 		--original_print(source_file)
 		local debug_path = source_file:match('%a+.lua') ..' ['.. info.currentline ..']'
 		original_print(debug_path..": "..message)
-	end
+	end]]--
 
 return Util

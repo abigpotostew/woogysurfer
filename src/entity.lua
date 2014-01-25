@@ -34,4 +34,10 @@ local function draw(self)
 end
 Entity.draw = Entity:makeMethod(draw)
 
+local function update (self, dt)
+        --override me
+end
+Entity.update = Entity:makeMethod (update)
+
+
 return Entity
