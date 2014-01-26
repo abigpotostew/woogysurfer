@@ -80,6 +80,21 @@ local function init (class, self)
 end
 Level:makeInit (init)
 
+<<<<<<< HEAD
+local function threadSpawn (self)
+
+      self.newThread = coroutine.create(
+        function(level)
+           for i=self.counter,8 do
+              level:spawnEnemy(i)
+              coroutine.yield()
+           end
+      end)
+end
+Level.threadSpawn = Level:makeMethod (threadSpawn)
+
+=======
+>>>>>>> e0effba3d352d6123cf6ed1b07e57acfde7dc717
 local function draw (self)
     self.woogy:draw()
     --Draw enemies!!
