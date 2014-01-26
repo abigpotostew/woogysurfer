@@ -6,13 +6,18 @@ local Woogy = require 'src.woogy.woogy'
 local Bullet = require 'src.bullet'
 local Enemy = require 'src.woogy.enemy'
 
+HC = require 'src.hardoncollider'
+
+local MAX_ENTITIES = 100
 local bulletSpeed = 550
+
+local currentLevel
 
 local function init (class, self)
     class.super:initWith(self)
+    currentLevel = self
     
-    love.physics.setMeter (64)
-    self.world = love.physics.newWorld (0, 0,  true)
+    self.collider = HC ( MAX_ENTITIES, on_collision, collision_stop)
     
     self.woogy = Woogy:init (self)
     
@@ -114,5 +119,15 @@ local function spawnBullet( self, x, y, xdir, ydir, angle, size, color )
      table.insert (self.bulletList, Bullet:init (x, y, xdir, ydir, angle, size, bulletSpeed, color) )
 end
 Level.spawnBullet = Level:makeMethod (spawnBullet)
+    
+ local function on_collision (dt, shape_a, shape_b, mtv_x, mtv_y)
+     print(text[#text+1] = string.format("Colliding. mtv = (%s,%s)", 
+                                    mtv_x, mtv_y))
+end
+    
+ -- this is called when two shapes stop colliding
+local function collision_stop(dt, shape_a, shape_b)
+    text[#text+1] = "Stopped colliding"
+end
     
 return Level
