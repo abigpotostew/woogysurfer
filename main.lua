@@ -19,6 +19,18 @@ function love.load()
     HEIGHT = love.window.getHeight()
     HWIDTH = WIDTH/2
     HHEIGHT = HEIGHT/2
+    
+      --load sounds
+  musicSoundFileName = love.sound.newSoundData("music.wav")
+  musicSoundSource = love.audio.newSource(musicSoundFileName)
+  musicSoundSource:setVolume(0.4)
+  musicSoundSource:play()
+  
+--  musicSoundFileName = love.sound.newSoundData("music.wav")
+--  musicSoundSource = love.audio.newSource(musicSoundFileName)
+  
+
+--  musicSoundSource:setPitch(1.0) -- one octave lower
 end
 
 function love.update (dt)

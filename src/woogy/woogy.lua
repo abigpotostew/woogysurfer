@@ -56,6 +56,10 @@ local function init(class, self, level, w, h)
     
     self.remainingBullets = 4
     
+  shootSoundFileName = love.sound.newSoundData("shoot.wav")
+  shootSoundSource = love.audio.newSource(shootSoundFileName)
+  shootSoundSource:setVolume(2.0)
+    
     return self
 end
 Woogy:makeInit(init)
@@ -155,6 +159,8 @@ local function handleInput (self, inputType, params)
             if self.remainingBullets == 0 then
                 self:resetCornerBullets()
             end
+            shootSoundSource:stop()
+            shootSoundSource:play()
             
         end
     end

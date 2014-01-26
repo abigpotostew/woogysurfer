@@ -59,14 +59,14 @@ local function init (class, self)
    
     self.enemyList = {}
 -- Testing the various enemy spawning positions.
-    self:spawnEnemy(1)
-    self:spawnEnemy(2)
-    self:spawnEnemy(3)
-    self:spawnEnemy(4)
-    self:spawnEnemy(5)
-    self:spawnEnemy(6)
-    self:spawnEnemy(7)
-    self:spawnEnemy(8)
+--    self:spawnEnemy(1)
+--    self:spawnEnemy(2)
+--    self:spawnEnemy(3)
+--    self:spawnEnemy(4)
+--    self:spawnEnemy(5)
+--    self:spawnEnemy(6)
+--    self:spawnEnemy(7)
+--    self:spawnEnemy(8)
    
     self.bulletList = {}
 
