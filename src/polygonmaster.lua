@@ -22,4 +22,13 @@ function pmaster.createBulletTriangle ( scale, img  )
     return love.graphics.newMesh (verts, img, 'fan')
 end
 
+
+function pmaster.createEnemyTriangle (scale)
+    scale = scale or 50
+    verts = verts or { { scale,  -scale,  0, 0 },
+                                      { scale, scale, 0, 1 },
+                                      { 2*scale, 0, 1, 0 } }
+    return love.graphics.newMesh (verts,img,'fan')
+end
+
 return pmaster
