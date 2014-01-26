@@ -130,13 +130,13 @@ end
 Level.spawnBullet = Level:makeMethod (spawnBullet)
     
  local function on_collision (dt, shape_a, shape_b, mtv_x, mtv_y)
-     print(text[#text+1] = string.format("Colliding. mtv = (%s,%s)", 
-                                    mtv_x, mtv_y))
+     --print(string.format("Colliding. mtv = (%s,%s)", 
+     --                               mtv_x, mtv_y))
 end
     
  -- this is called when two shapes stop colliding
 local function collision_stop(dt, shape_a, shape_b)
-    text[#text+1] = "Stopped colliding"
+    --text[#text+1] = "Stopped colliding"
 end
     
 return Level
