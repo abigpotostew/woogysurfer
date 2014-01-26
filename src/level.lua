@@ -25,10 +25,10 @@ local function init (class, self)
     self.woogy.keyspressed = self.keypressed --woogy has pointer to input array
     
     
-    --determining the starting position and direction of enemies according to an int:
+    --determining the starting position, direction, and rotation of enemies according to an int.
     self.positionMap = {}
-    local sw = love.window.getWidth() - 200
-    local sh = love.window.getHeight()
+    local sw = love.window.getWidth() +5 ---200
+    local sh = love.window.getHeight() +135
     
     self.positionMap[1] = {-70, -70}
     self.positionMap[2] = {sw/2, -70}
@@ -47,18 +47,26 @@ local function init (class, self)
     self.vectorMap[6] = {-self.vectorMap[2][1], -self.vectorMap[2][2]}
     self.vectorMap[7] = {-self.vectorMap[3][1], -self.vectorMap[3][2]}
     self.vectorMap[8] = {-self.vectorMap[4][1], -self.vectorMap[4][2]}
+    self.rotationMap = {}
+    self.rotationMap[1] = QTR_PI
+    self.rotationMap[2] = HALF_PI
+    self.rotationMap[3] = THR_QTR_PI
+    self.rotationMap[4] = PI
+    self.rotationMap[5] = 5*QTR_PI
+    self.rotationMap[6] = 3*HALF_PI
+    self.rotationMap[7] = 7*QTR_PI
+    self.rotationMap[8] = 0
    
     self.enemyList = {}
--- This was just testing the various enemy spawning positions.
--- Why is it still here? Why is anyone here?
---    self:spawnEnemy(1)
---    self:spawnEnemy(2)
---    self:spawnEnemy(3)
---    self:spawnEnemy(4)
---    self:spawnEnemy(5)
---    self:spawnEnemy(6)
---    self:spawnEnemy(7)
---    self:spawnEnemy(8)
+-- Testing the various enemy spawning positions.
+    self:spawnEnemy(1)
+    self:spawnEnemy(2)
+    self:spawnEnemy(3)
+    self:spawnEnemy(4)
+    self:spawnEnemy(5)
+    self:spawnEnemy(6)
+    self:spawnEnemy(7)
+    self:spawnEnemy(8)
    
     self.bulletList = {}
     
@@ -97,7 +105,8 @@ local function spawnEnemy(self, posID)
     local y = self.positionMap[posID][2]
     local xDir = self.vectorMap[posID][1]
     local yDir = self.vectorMap[posID][2]
-    local enemy = Enemy:init (x,y,xDir,yDir)
+    local rotation = self.rotationMap[posID]
+    local enemy = Enemy:init (x,y,xDir,yDir, rotation)
     table.insert(self.enemyList,enemy)
 end
 Level.spawnEnemy = Level:makeMethod (spawnEnemy)
