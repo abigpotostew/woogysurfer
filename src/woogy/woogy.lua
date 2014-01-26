@@ -30,10 +30,7 @@ local function init(class, self, level, w, h)
     
     --Regarding the rotating box
     w, h = w or 100,  h or 100
-    self.w = w
-    self.h = h
-    self.hw = w/2
-    self.hh = h/2
+    self:setSize (w)
     
     self.angle = 0
     
@@ -63,7 +60,25 @@ local function init(class, self, level, w, h)
 end
 Woogy:makeInit(init)
 
+local function setSize(self, size)
+    self.w = size
+    self.h = size
+    self.hw = size/2
+    self.hh = size/2
+end
+Woogy.setSize = Woogy:makeMethod(setSize)
 
+local function resetCornerBullets(self)
+    self.bullets.up = polygonMaster.createCornerTriangle()
+    self.bullets.left = polygonMaster.createCornerTriangle()
+    self.bullets.down = polygonMaster.createCornerTriangle()
+    self.bullets.right = polygonMaster.createCornerTriangle()
+    local size = self.w
+    size = size * PM.specialL * 2
+    self:setSize (size)
+    self.remainingBullets = 4
+ end
+ Woogy.resetCornerBullets = Woogy:makeMethod(resetCornerBullets)
 
 
 local function shrink(self)
@@ -137,6 +152,10 @@ local function handleInput (self, inputType, params)
             
             self.remainingBullets = self.remainingBullets - 1
             -- if not more bullets, re-up the bullets.
+            if self.remainingBullets == 0 then
+                self:resetCornerBullets()
+            end
+            
         end
     end
 end
@@ -149,7 +168,7 @@ local function update (self, dt)
     self.angle = Util.vecToAngle(  love.mouse.getX() - HWIDTH, love.mouse.getY() - HHEIGHT )
     
     -- grow it!
-    local size = self.w + dt*0
+    local size = self.w + dt*15
     self.w = size
     self.h = size
     self.hw = size/2

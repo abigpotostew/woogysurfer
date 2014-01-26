@@ -6,6 +6,8 @@ local Woogy = require 'src.woogy.woogy'
 local Bullet = require 'src.bullet'
 local Enemy = require 'src.woogy.enemy'
 
+local bulletSpeed = 550
+
 local function init (class, self)
     class.super:initWith(self)
     
@@ -109,7 +111,7 @@ Level.handleInput = Level:makeMethod (handleInput)
 local function spawnBullet( self, x, y, xdir, ydir, angle, size, color )
     --local x = polygonMaster.specialL
     --x, y, xDir, yDir,  size, speed, color
-     table.insert (self.bulletList, Bullet:init (x, y, xdir, ydir, angle, size, 50, color) )
+     table.insert (self.bulletList, Bullet:init (x, y, xdir, ydir, angle, size, bulletSpeed, color) )
 end
 Level.spawnBullet = Level:makeMethod (spawnBullet)
     
