@@ -17,11 +17,10 @@ local function init (class, self)
     self.keyspressed = {}
     self.woogy.keyspressed = self.keypressed --woogy has pointer to input array
     
-    
     --determining the starting position and direction of enemies according to an int:
     self.positionMap = {}
-    local sw = love.window.getWidth() - 200
-    local sh = love.window.getHeight()
+    local sw = love.window.getWidth()
+    local sh = love.window.getHeight() + 200
     
     self.positionMap[1] = {-70, -70}
     self.positionMap[2] = {sw/2, -70}
@@ -52,12 +51,32 @@ local function init (class, self)
 --    self:spawnEnemy(6)
 --    self:spawnEnemy(7)
 --    self:spawnEnemy(8)
-   
+
+      initTime = love.timer.getTime()
+      print (initTime)
+      
+      --run the init thread, then start it (paused by default)
+      self:threadSpawn()
+      coroutine.resume(self.newThread, self)
     
-    
+      self.elapsed = 0
+      self.counter = 1
     return self
 end
 Level:makeInit (init)
+
+local function threadSpawn (self)
+
+      self.newThread = coroutine.create(
+        function(level)
+           for i=self.counter,8 do
+             print (i)
+              level:spawnEnemy(i)
+              coroutine.yield()
+           end
+      end)
+end
+Level.threadSpawn = Level:makeMethod (threadSpawn)
 
 local function draw (self)
     self.woogy:draw()
@@ -66,6 +85,23 @@ end
 Level.draw = Level:makeMethod (draw)
 
 local function update (self, dt)
+--    self.elapsed = self.elapsed + dt
+--    if self.elapsed == 10 then 
+    local currentTime = love.timer.getTime()
+    local timeDelta = math.floor(currentTime - initTime)
+    if timeDelta == self.counter then
+    
+      self:threadSpawn(self) 
+            if self.counter > 8 then
+            self.counter = 1
+            initTime = love.timer.getTime()
+
+      end
+      coroutine.resume(self.newThread, self)
+      self.counter = self.counter + 1
+
+    end
+    
     self.woogy:update(dt, self.keyspressed)
     for i = 1,#self.enemyList do self.enemyList[i]:update(dt) end
 end
