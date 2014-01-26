@@ -8,6 +8,8 @@ local woogy = nil
 local Level = require 'src.level'
 local currentLevel
 
+local keydown = false
+
 function love.load()
     currentLevel = Level:init()
     
@@ -32,11 +34,11 @@ function love.mousepressed(x, y, button)
 end
  
 function love.mousereleased(x, y, button)
-    --currentLevel.woogy:shrink()
     currentLevel:handleInput ('mousereleased', { x=x, y=y, button=button })
 end
  
 function love.keypressed (key, isrepeat)
+    keydown = true
     currentLevel:handleInput ( 'keypressed', {key=key, isrepeat=isrepeat} )
 end
  

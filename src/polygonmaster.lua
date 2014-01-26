@@ -3,39 +3,23 @@
 
 local pmaster = {}
 
-local  specialL = .353553391 --length from center of unit square to a vertice
+local  specialL = math.sqrt(.125) --.353553391 --length from center of unit square to a vertice, also 2(a^2)=0.5^2
 -- a unit square has sides length = 1 and center at origin.
 pmaster.specialL = specialL
 
-function pmaster.createTriangle ( verts, img  )
+function pmaster.createCornerTriangle ( verts, img  )
     verts = verts or { { specialL,  - specialL,  0, 0 },
                                       { specialL, specialL, 0, 1 },
                                       { specialL*2, 0, 1, 0 } }
     return love.graphics.newMesh (verts, img, 'fan')
 end
 
-function pmaster.createTriangleA (  )
-    return pmaster.createTriangle({ { -0.5, -0.5,  0, 0 },
-                                                                       { -0.5, 0, 0, 1 },
-                                                                       { 0, -0.5, 1, 0 } } )
-end
-
-function pmaster.createTriangleB (  )
-    return pmaster.createTriangle ({ { 0.5, -0.5,  0, 0 },
-                                                                       { 0, -0.5, 0, 1 },
-                                                                       { 0.5, 0, 1, 0 } } )
-end
-
-function pmaster.createTriangleC (  )
-    return pmaster.createTriangle ({ { 0.5, 0.5,  0, 0 },
-                                                                       { 0.5, 0, 0, 1 },
-                                                                       { 0, 0.5, 1, 0 } } )
-end
-
-function pmaster.createTriangleD (  )
-    return pmaster.createTriangle ({ { -0.5, 0.5,  0, 0 },
-                                                                       { 0, 0.5, 0, 1 },
-                                                                       { -0.5, 0, 1, 0 } } )
+function pmaster.createBulletTriangle ( scale, img  )
+    scale = scale or 1.0
+    local verts = { { 0,  - specialL*scale,  0, 0 },
+                                 { 0, specialL*scale, 0, 1 },
+                                 { specialL*2*scale, 0, 1, 0 } }
+    return love.graphics.newMesh (verts, img, 'fan')
 end
 
 return pmaster

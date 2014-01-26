@@ -6,37 +6,57 @@ local Woogy = entity:makeSubclass("Woogy")
 local Util = require 'src.util'
 
 local polygonMaster = require 'src.polygonmaster'
+local PM = polygonMaster
 
---woogy components:
---local woogyPhysics = require 'src.woogy.physics'
+--CHANGE keys for input if needed here ----------
+local keyMap = {}
+keyMap.up = 'w'
+keyMap.left = 'a'
+keyMap.down = 's'
+keyMap.right = 'd'
 
+local angleOffset = {}
+angleOffset.up = 0
+angleOffset.left = -HALF_PI
+angleOffset.down = -PI
+angleOffset.right = -3*HALF_PI
 
-
-
-local function init(class, self, physworld, w, h)
+local function init(class, self, level, w, h)
     class.super:initWith(self)
-    assert(physworld, 'a woogy needs a world. and a pizza.')
+    assert(level, 'a woogy needs a level. and a pizza.')
+    
+    self.level = level
     
     --Regarding the rotating box
     w, h = w or 100,  h or 100
     self.w = w
     self.h = h
-    --self.physics = woogyPhysics.buildWoogyBody (physworld, w, h)
     self.hw = w/2
     self.hh = h/2
     
+    self.angle = 0
     
     --self.canvas_main, self.canvas_tmp = makeWoogyCanvas (w, h)
-    
-    
-    
-    self.keyspressed = {}
+    self.inputMap =  {}
+    self.inputMap[keyMap.up] = 'up'
+    self.inputMap[keyMap.left] =  'left'
+    self.inputMap[keyMap.down] = 'down'
+    self.inputMap[keyMap.right] = 'right'
+ 
+     self.colorMap = { up = {255,34,212}, --pink
+                                        left = {23,110,240}, --blue
+                                        down = {0,153,0}, --GREEN
+                                        right = {127,0,255} } --purps
     
     self.bullets = {}
-    self.bullets.up = polygonMaster.createTriangle()
-    self.bullets.left = polygonMaster.createTriangle()
-    self.bullets.down = polygonMaster.createTriangle()
-    self.bullets.right = polygonMaster.createTriangle()
+    self.bullets.up = polygonMaster.createCornerTriangle()
+    self.bullets.left = polygonMaster.createCornerTriangle()
+    self.bullets.down = polygonMaster.createCornerTriangle()
+    self.bullets.right = polygonMaster.createCornerTriangle()
+    
+    self.bulletSeq = {'up', 'left', 'down', 'right'}
+    
+    self.remainingBullets = 4
     
     return self
 end
@@ -61,10 +81,9 @@ local function draw (self)
     --love.graphics.draw(self.canvas_tmp, self.w)
     love.graphics.setColor(255, 255, 255)
     
-    local cx, cy = love.graphics.getWidth()/2, love.graphics.getHeight()/2
     love.graphics.push()
-    love.graphics.translate ( cy, cy )
-        love.graphics.rotate ( Util.vecToAngle(  love.mouse.getX() - cx, love.mouse.getY() - cy ) ) --offset to get corner at mouse pt.
+    love.graphics.translate ( HWIDTH, HHEIGHT )
+        love.graphics.rotate ( self.angle ) --offset to get corner at mouse pt.
     
         --INNER WHITE SQUARE
          love.graphics.push()
@@ -74,27 +93,76 @@ local function draw (self)
         
         love.graphics.push()
             
-            love.graphics.setColor(255,34,212) --PINK
-            love.graphics.draw( self.bullets.up, 0, 0,  0, self.w, self.h)
-         
-            love.graphics.rotate ( -HALF_PI )
-            love.graphics.setColor (23,110,240) -- BLUE
-            love.graphics.draw( self.bullets.left, 0, 0,  0, self.w, self.h  )
-    
-            love.graphics.rotate ( -HALF_PI )
-            love.graphics.setColor(0,153,0) --green
-            love.graphics.draw( self.bullets.down, 0, 0,  0, self.w, self.h )
-    
-            love.graphics.rotate ( -HALF_PI )
-            love.graphics.setColor(127,0,255) --purps
-            love.graphics.draw( self.bullets.right, 0, 0,  0, self.w, self.h)
+            --DRAW THE BODY BULLETS
+            for i, bulletKey in ipairs(self.bulletSeq) do
+                if self.bullets[bulletKey] then
+                    love.graphics.setColor (self.colorMap[bulletKey][1],  --r
+                                                                     self.colorMap[bulletKey][2],  --g
+                                                                     self.colorMap[bulletKey][3] ) --b
+                    love.graphics.draw (self.bullets[bulletKey], 0, 0, 0, self.w, self.h)
+                end
+                love.graphics.rotate ( -HALF_PI )
+            end
+            
         love.graphics.pop()
     love.graphics.pop()
 end
 Woogy.draw = Woogy:makeMethod(draw)
 
-local function handleInput (inputType, params)
-    
+
+
+local function handleInput (self, inputType, params)
+    if inputType == 'keypressed' then
+        local k = params.key
+        local bulletParams = nil
+        
+        --If user is pressing a key used for bullets
+        local direction = self.inputMap[k]
+        if direction then
+            if self.bullets[direction] then
+                bulletParams={ a = angleOffset[direction], color = self.colorMap[direction] }
+            end
+        end
+        if bulletParams then
+            --self.level:spawnBullet(
+            --spawn a bullet
+            --self.remainingBullets
+            -- if not more bullets, re-up the bullets.
+        end
+        
+        --[[if k == keyMap.up then
+            --spawn up guy
+            if self.bullets.up then
+                self.bullets.up = nil
+                bulletParams = { a = 0,
+                                                   color = self.colorMap.up }
+             end
+         elseif k == keyMap.left then
+            --spawn left bullet
+            if self.bullets.left then
+                self.bullets.left = nil
+                bulletParams = { a = -HALF_PI,
+                                                   color = self.colorMap.left }
+             end
+         elseif k == keyMap.down then
+            --spawn down guy
+            if self.bullets.down then
+                self.bullets.down = nil
+                bulletParams = { a = -2*HALF_PI,
+                                                   color = self.colorMap.down }
+             end
+         elseif k == keyMap.right then
+            --spawn right guy
+            if self.bullets.right then
+                self.bullets.right = nil
+                bulletParams = { a = -3*HALF_PI,
+                                                   color = self.colorMap.right }
+             end
+         end
+         if bulletParams then
+             --x = PM.specialL * self.w, y = PM.specialL * self.h
+         end
+    end --]]
 end
 Woogy.handleInput = Woogy:makeMethod (handleInput)
 
@@ -102,8 +170,10 @@ Woogy.handleInput = Woogy:makeMethod (handleInput)
 local function update (self, dt)
     --self.physics:update( keyspressed ) --delegate physics to the physics component
     --rotate to point towards mouse.
+    self.angle = Util.vecToAngle(  love.mouse.getX() - HWIDTH, love.mouse.getY() - HHEIGHT )
     
-    local size = self.w + dt*0
+    -- grow it!
+    local size = self.w + dt*10
     self.w = size
     self.h = size
     self.hw = size/2
