@@ -12,7 +12,7 @@ local function init (class, self)
     love.physics.setMeter (64)
     self.world = love.physics.newWorld (0, 0,  true)
     
-    self.woogy = Woogy:init (self.world)
+    self.woogy = Woogy:init (self)
     
     self.keyspressed = {}
     self.woogy.keyspressed = self.keypressed --woogy has pointer to input array
@@ -53,7 +53,7 @@ local function init (class, self)
 --    self:spawnEnemy(7)
 --    self:spawnEnemy(8)
    
-    
+    self.bulletList = {}
     
     return self
 end
@@ -61,13 +61,27 @@ Level:makeInit (init)
 
 local function draw (self)
     self.woogy:draw()
-    for i = 1,#self.enemyList do self.enemyList[i]:draw(dt) end
+    --Draw enemies!!
+    for i = 1,#self.enemyList do self.enemyList[i]:draw() end
+    
+    --Draw bullets!!!
+    for i = 1,#self.bulletList do self.bulletList[i]:draw() end
 end
 Level.draw = Level:makeMethod (draw)
 
 local function update (self, dt)
     self.woogy:update(dt, self.keyspressed)
+    
+    --Update enemies
     for i = 1,#self.enemyList do self.enemyList[i]:update(dt) end
+    
+    --Update bullets, loop backwards so we can safely remove while iterating
+    for i=#self.bulletList, 1, -1 do
+        if self.bulletList[i]:update(dt) then
+            table.remove(self.bulletList, i)
+        end
+    end
+    
 end
 Level.update = Level:makeMethod (update)
 
@@ -92,9 +106,10 @@ end
 Level.handleInput = Level:makeMethod (handleInput)
 
 --id is up, right, down, left and size is the current woogy width
-local function spawnBullet( x, y, size, color )
+local function spawnBullet( self, x, y, xdir, ydir, angle, size, color )
     --local x = polygonMaster.specialL
-    --local bullet = Bullet:init(
+    --x, y, xDir, yDir,  size, speed, color
+     table.insert (self.bulletList, Bullet:init (x, y, xdir, ydir, angle, size, 50, color) )
 end
 Level.spawnBullet = Level:makeMethod (spawnBullet)
     

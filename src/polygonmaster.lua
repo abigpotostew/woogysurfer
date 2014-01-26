@@ -18,7 +18,7 @@ function pmaster.createBulletTriangle ( scale, img  )
     scale = scale or 1.0
     local verts = { { 0,  - specialL*scale,  0, 0 },
                                  { 0, specialL*scale, 0, 1 },
-                                 { specialL*2*scale, 0, 1, 0 } }
+                                 { specialL*scale, 0, 1, 0 } }
     return love.graphics.newMesh (verts, img, 'fan')
 end
 

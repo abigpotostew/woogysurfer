@@ -4,6 +4,7 @@ local entity = require('src.entity')
 local Woogy = entity:makeSubclass("Woogy")
 
 local Util = require 'src.util'
+local Vec2 = require 'src.vector2'
 
 local polygonMaster = require 'src.polygonmaster'
 local PM = polygonMaster
@@ -120,13 +121,21 @@ local function handleInput (self, inputType, params)
         local direction = self.inputMap[k]
         if direction then
             if self.bullets[direction] then
-                bulletParams={ a = angleOffset[direction], color = self.colorMap[direction] }
+                bulletParams={ a = angleOffset[direction] + self.angle, color = self.colorMap[direction] }
+                self.bullets[direction] = nil
             end
         end
         if bulletParams then
-            --self.level:spawnBullet(
-            --spawn a bullet
-            --self.remainingBullets
+            local xdir = math.cos(bulletParams.a)
+            local ydir = math.sin(bulletParams.a)
+            local x, y = PM.specialL*xdir * self.w + HWIDTH,  PM.specialL* ydir  * self.h+ HHEIGHT
+            --local s, c = math.sin(bulletParams.a), math.cos(bulletParams.a)
+            --local rx = ((x) * c) - ((-y) * s) + HWIDTH
+            --local ry = ((- y) * c) - ((x) * s) + HHEIGHT
+            --x, y, xdir, ydir, angle, size, color
+            self.level:spawnBullet ( x, y, xdir, ydir, bulletParams.a, self.w, bulletParams.color)
+            
+            self.remainingBullets = self.remainingBullets - 1
             -- if not more bullets, re-up the bullets.
         end
     end
@@ -140,7 +149,7 @@ local function update (self, dt)
     self.angle = Util.vecToAngle(  love.mouse.getX() - HWIDTH, love.mouse.getY() - HHEIGHT )
     
     -- grow it!
-    local size = self.w + dt*10
+    local size = self.w + dt*0
     self.w = size
     self.h = size
     self.hw = size/2
