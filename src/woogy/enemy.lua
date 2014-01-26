@@ -7,6 +7,7 @@ local Enemy = entity:makeSubclass("Enemy")
 local function init(class, self, collider, x, y, xDir, yDir, rotation, speed)
     class.super:initWith(self)
     self.enemyTriangle = collider:addPolygon( polygonMaster.createEnemyTriangleVerts() )
+    self.enemyTriangle.id = 'enemy'
     
     self.enemyTriangle:setRotation(rotation)
     self.enemyTriangle:scale(50) --default size??

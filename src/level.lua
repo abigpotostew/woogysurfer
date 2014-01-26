@@ -15,6 +15,7 @@ local currentLevel
 
 local function init (class, self)
     class.super:initWith(self)
+    
     currentLevel = self
     
     self.collider = HC ( MAX_ENTITIES, on_collision, collision_stop)
@@ -169,11 +170,17 @@ end
 Level.spawnBullet = Level:makeMethod (spawnBullet)
     
  local function on_collision (dt, shape_a, shape_b, mtv_x, mtv_y)
+     if shape_a.id == shape_b.id then return end --similar objects don't collide
+     if shape_a.id == 'bullet' and shape_b.id ==  'enemy' or
+         shape_a.id == 'enemy' and shape_b.id ==  'bullet' then
+         --bullet hits enemy
+         print("YO!")
+     end
 end
     
  -- this is called when two shapes stop colliding
 local function collision_stop(dt, shape_a, shape_b)
-    --text[#text+1] = "Stopped colliding"
+    print("sto")
 end
     
 return Level
