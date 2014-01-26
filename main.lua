@@ -12,7 +12,15 @@ function love.load()
     currentLevel = Level:init()
     
 	love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
+<<<<<<< HEAD
 	love.window.setMode(600, 600) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
+=======
+	love.window.setMode(800, 800) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
+    WIDTH = love.window.getWidth()
+    HEIGHT = love.window.getHeight()
+    HWIDTH = WIDTH/2
+    HHEIGHT = HEIGHT/2
+>>>>>>> f03a9c1cc42339590e8513b3f485c8831c5fbedd
 end
 
 function love.update (dt)
@@ -28,7 +36,7 @@ function love.mousepressed(x, y, button)
 end
  
 function love.mousereleased(x, y, button)
-    currentLevel.woogy:shrink()
+    --currentLevel.woogy:shrink()
     currentLevel:handleInput ('mousereleased', { x=x, y=y, button=button })
 end
  
