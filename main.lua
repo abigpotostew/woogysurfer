@@ -10,7 +10,6 @@ local currentLevel
 
 function love.load()
     currentLevel = Level:init()
-    
     love.graphics.setBackgroundColor(104, 136, 248) --set the background color to a nice blue
     love.window.setMode(600, 600) --set the window dimensions to 650 by 650 with no fullscreen, vsync on, and no antialiasing
 end
