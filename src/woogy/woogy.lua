@@ -129,40 +129,7 @@ local function handleInput (self, inputType, params)
             --self.remainingBullets
             -- if not more bullets, re-up the bullets.
         end
-        
-        --[[if k == keyMap.up then
-            --spawn up guy
-            if self.bullets.up then
-                self.bullets.up = nil
-                bulletParams = { a = 0,
-                                                   color = self.colorMap.up }
-             end
-         elseif k == keyMap.left then
-            --spawn left bullet
-            if self.bullets.left then
-                self.bullets.left = nil
-                bulletParams = { a = -HALF_PI,
-                                                   color = self.colorMap.left }
-             end
-         elseif k == keyMap.down then
-            --spawn down guy
-            if self.bullets.down then
-                self.bullets.down = nil
-                bulletParams = { a = -2*HALF_PI,
-                                                   color = self.colorMap.down }
-             end
-         elseif k == keyMap.right then
-            --spawn right guy
-            if self.bullets.right then
-                self.bullets.right = nil
-                bulletParams = { a = -3*HALF_PI,
-                                                   color = self.colorMap.right }
-             end
-         end
-         if bulletParams then
-             --x = PM.specialL * self.w, y = PM.specialL * self.h
-         end
-    end --]]
+    end
 end
 Woogy.handleInput = Woogy:makeMethod (handleInput)
 
