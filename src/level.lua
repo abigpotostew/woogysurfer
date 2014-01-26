@@ -26,7 +26,7 @@ end
 Level.draw = Level:makeMethod (draw)
 
 local function update (self, dt)
-    self.world:update(dt)
+    --self.world:update(dt)
     self.woogy:update (dt, self.keyspressed)
 end
 Level.update = Level:makeMethod (update)
@@ -38,6 +38,7 @@ local function handleInput ( self, inputType,  params )
        self.keyspressed[params.key] = nil
    end
    --self.woogy:handleInput (self.keyspressed)
+   self.woogy:handleInput (inputType, params)
 end
 Level.handleInput = Level:makeMethod (handleInput)
 

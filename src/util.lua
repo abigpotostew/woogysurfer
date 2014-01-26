@@ -16,6 +16,12 @@ local Util = setmetatable({}, nil)
 	end,
 }) ]]--
 
+PI = math.pi
+TWO_PI = PI*2.0
+HALF_PI = PI/2.0
+QTR_PI = HALF_PI/2.0
+THR_QTR_PI = 3*PI/4
+
 Util.EPSILON = 0.00001
 
 function Util.DeepCopy(object)
@@ -194,5 +200,10 @@ end
 		local debug_path = source_file:match('%a+.lua') ..' ['.. info.currentline ..']'
 		original_print(debug_path..": "..message)
 	end]]--
+
+function Util.vecToAngle( x, y )
+    return math.atan2( y, x )
+end
+
 
 return Util
