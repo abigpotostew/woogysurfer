@@ -130,4 +130,8 @@ Vector2.mid = Vector2:makeMethod(function(self, other)
     return ((other + -self)/2)+self
 end)
 
+Vector2.vectorAtAngle = Vector2:makeMethod(function(self, angle)
+        return Vector2:init( math.cos(angle), math.sin(angle) )
+end)
+
 return Vector2

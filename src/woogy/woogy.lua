@@ -4,6 +4,7 @@ local entity = require('src.entity')
 local Woogy = entity:makeSubclass("Woogy")
 
 local Util = require 'src.util'
+local Vec2 = require 'src.vector2'
 
 local polygonMaster = require 'src.polygonmaster'
 local PM = polygonMaster
@@ -29,10 +30,7 @@ local function init(class, self, level, w, h)
     
     --Regarding the rotating box
     w, h = w or 100,  h or 100
-    self.w = w
-    self.h = h
-    self.hw = w/2
-    self.hh = h/2
+    self:setSize (w)
     
     self.angle = 0
     
@@ -62,7 +60,25 @@ local function init(class, self, level, w, h)
 end
 Woogy:makeInit(init)
 
+local function setSize(self, size)
+    self.w = size
+    self.h = size
+    self.hw = size/2
+    self.hh = size/2
+end
+Woogy.setSize = Woogy:makeMethod(setSize)
 
+local function resetCornerBullets(self)
+    self.bullets.up = polygonMaster.createCornerTriangle()
+    self.bullets.left = polygonMaster.createCornerTriangle()
+    self.bullets.down = polygonMaster.createCornerTriangle()
+    self.bullets.right = polygonMaster.createCornerTriangle()
+    local size = self.w
+    size = size * PM.specialL * 2
+    self:setSize (size)
+    self.remainingBullets = 4
+ end
+ Woogy.resetCornerBullets = Woogy:makeMethod(resetCornerBullets)
 
 
 local function shrink(self)
@@ -120,14 +136,26 @@ local function handleInput (self, inputType, params)
         local direction = self.inputMap[k]
         if direction then
             if self.bullets[direction] then
-                bulletParams={ a = angleOffset[direction], color = self.colorMap[direction] }
+                bulletParams={ a = angleOffset[direction] + self.angle, color = self.colorMap[direction] }
+                self.bullets[direction] = nil
             end
         end
         if bulletParams then
-            --self.level:spawnBullet(
-            --spawn a bullet
-            --self.remainingBullets
+            local xdir = math.cos(bulletParams.a)
+            local ydir = math.sin(bulletParams.a)
+            local x, y = PM.specialL*xdir * self.w + HWIDTH,  PM.specialL* ydir  * self.h+ HHEIGHT
+            --local s, c = math.sin(bulletParams.a), math.cos(bulletParams.a)
+            --local rx = ((x) * c) - ((-y) * s) + HWIDTH
+            --local ry = ((- y) * c) - ((x) * s) + HHEIGHT
+            --x, y, xdir, ydir, angle, size, color
+            self.level:spawnBullet ( x, y, xdir, ydir, bulletParams.a, self.w, bulletParams.color)
+            
+            self.remainingBullets = self.remainingBullets - 1
             -- if not more bullets, re-up the bullets.
+            if self.remainingBullets == 0 then
+                self:resetCornerBullets()
+            end
+            
         end
     end
 end
@@ -140,7 +168,7 @@ local function update (self, dt)
     self.angle = Util.vecToAngle(  love.mouse.getX() - HWIDTH, love.mouse.getY() - HHEIGHT )
     
     -- grow it!
-    local size = self.w + dt*10
+    local size = self.w + dt*15
     self.w = size
     self.h = size
     self.hw = size/2
