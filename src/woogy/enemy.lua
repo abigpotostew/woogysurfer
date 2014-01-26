@@ -19,16 +19,14 @@ Enemy:makeInit(init)
 
 local function draw (self, rotation)
     love.graphics.draw(self.enemyTriangle, self.x, self.y, self.rotation)
---    love.graphics.setColor(55, 86, 0)
---    love.graphics.rectangle("fill", self.x-35, self.y-35, 70, 70)
 end
 Enemy.draw = Enemy:makeMethod(draw)
 
 
 local function update (self, dt)
   --TODO: Need to update update?
-   self.x = self.x + self.xDir
-   self.y = self.y + self.yDir
+   self.x = self.x + self.xDir*4
+   self.y = self.y + self.yDir*4
 end
 Enemy.update = Enemy:makeMethod (update)
 

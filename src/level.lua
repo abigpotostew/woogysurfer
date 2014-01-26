@@ -6,6 +6,9 @@ local Woogy = require 'src.woogy.woogy'
 local Bullet = require 'src.bullet'
 local Enemy = require 'src.woogy.enemy'
 
+
+
+
 HC = require 'src.hardoncollider'
 
 local MAX_ENTITIES = 100
@@ -17,6 +20,10 @@ local function init (class, self)
     class.super:initWith(self)
     currentLevel = self
     
+    self.LevelData = require 'src.levelData'
+    
+    self.levelStepper = 1
+    
     self.collider = HC ( MAX_ENTITIES, on_collision, collision_stop)
     
     self.woogy = Woogy:init (self)
@@ -26,18 +33,17 @@ local function init (class, self)
     
     
     --determining the starting position, direction, and rotation of enemies according to an int.
-    self.positionMap = {}
-    local sw = love.window.getWidth() +5 ---200
+    local sw = love.window.getWidth() +5
     local sh = love.window.getHeight() +135
-    
+    self.positionMap = {}
     self.positionMap[1] = {-70, -70}
-    self.positionMap[2] = {sw/2, -70}
+    self.positionMap[2] = {sw/2, -90}
     self.positionMap[3] = {sw+70, -70}
-    self.positionMap[4] = {sw+70, sh/2}
+    self.positionMap[4] = {sw+90, sh/2}
     self.positionMap[5] = {sw+70, sh+70}
-    self.positionMap[6] = {sw/2, sh+70}
+    self.positionMap[6] = {sw/2, sh+100}
     self.positionMap[7] = {-70, sh+70}
-    self.positionMap[8] = {-70, sh/2}
+    self.positionMap[8] = {-90, sh/2}
     self.vectorMap = {}   
     self.vectorMap[1] = {-math.cos(THR_QTR_PI), math.sin(THR_QTR_PI)}
     self.vectorMap[2] = {-math.cos(HALF_PI), math.sin(HALF_PI)}
@@ -58,15 +64,6 @@ local function init (class, self)
     self.rotationMap[8] = 0
    
     self.enemyList = {}
--- Testing the various enemy spawning positions.
---    self:spawnEnemy(1)
---    self:spawnEnemy(2)
---    self:spawnEnemy(3)
---    self:spawnEnemy(4)
---    self:spawnEnemy(5)
---    self:spawnEnemy(6)
---    self:spawnEnemy(7)
---    self:spawnEnemy(8)
    
     self.bulletList = {}
 
@@ -74,27 +71,14 @@ local function init (class, self)
       print (initTime)
       
       --run the init thread, then start it (paused by default)
-      self:threadSpawn()
-      coroutine.resume(self.newThread, self)
+--      self:threadSpawn()
+--      coroutine.resume(self.newThread, self)
 
-      self.elapsed = 0
-      self.counter = 1
+      self.elapsed = 0 -- total time elapsed
+      self.onBeatTime = .5 -- the beat
     return self
 end
 Level:makeInit (init)
-
-local function threadSpawn (self)
-
-      self.newThread = coroutine.create(
-        function(level)
-           for i=self.counter,8 do
-             print (i)
-              level:spawnEnemy(i)
-              coroutine.yield()
-           end
-      end)
-end
-Level.threadSpawn = Level:makeMethod (threadSpawn)
 
 local function draw (self)
     self.woogy:draw()
@@ -107,21 +91,20 @@ end
 Level.draw = Level:makeMethod (draw)
 
 local function update (self, dt)
---    self.elapsed = self.elapsed + dt
---    if self.elapsed == 10 then 
-    local currentTime = love.timer.getTime()
-    local timeDelta = math.floor(currentTime - initTime)
-    if timeDelta == self.counter then
+    self.elapsed = self.elapsed + dt -- increment time since last update
     
-      self:threadSpawn(self) 
-            if self.counter > 8 then
-            self.counter = 1
-            initTime = love.timer.getTime()
-
+    if self.elapsed >= self.onBeatTime then
+        for k = 1, #self.LevelData[self.levelStepper] do
+          self:spawnEnemy(self.LevelData[self.levelStepper][k])
+          print (self.LevelData[self.levelStepper][k]) -- not printed
+        end
+        
+      self.levelStepper = self.levelStepper + 1
+      self.elapsed = self.elapsed-self.onBeatTime
+      
+      if self.levelStepper >#self.LevelData then 
+        self.levelStepper=1
       end
-      coroutine.resume(self.newThread, self)
-      self.counter = self.counter + 1
-
     end
     
     self.woogy:update(dt, self.keyspressed)
@@ -140,6 +123,7 @@ end
 Level.update = Level:makeMethod (update)
 
 local function spawnEnemy(self, posID)
+    if posID == 0 then return end
     local x = self.positionMap[posID][1]
     local y = self.positionMap[posID][2]
     local xDir = self.vectorMap[posID][1]
